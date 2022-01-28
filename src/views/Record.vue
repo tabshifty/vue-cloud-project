@@ -6,7 +6,7 @@
     <div class="record__list" v-for="list in recordList" :key="list.id">
       <p>演员： {{list.actor}}</p>
       <p>{{list.title}}</p>
-      <p class="magnet" v-if="showMagnet"><a :href="list.magnet">磁力链接</a></p>
+      <p class="magnet" v-if="showMagnet"><a :href="list.magnet">磁力链接: {{list.magnet}}</a></p>
       <img v-for="link in list.imgUrls" :src="link" alt="" :key="link">
     </div>
     <button v-show="skip" @click="getPrev">上一页</button>
@@ -18,7 +18,12 @@
 
 <script>
 import axios from 'axios' 
-const domain = "http://192.168.8.27"
+const domain = ''//"http://192.168.8.27"
+const token = localStorage.getItem('token')
+axios.interceptors.request.use(function(config) {
+  config.headers.authorization = 'Bearer '+token
+  return config
+})
 export default {
   name: 'Home',
   data: function(){
@@ -27,7 +32,7 @@ export default {
       skip: 0,
       total: 0,
       number: 5,
-      showMagnet: navigator.userAgent.includes('115Browser')
+      showMagnet: true//navigator.userAgent.includes('115Browser')
     }
   },
   mounted: function() {
@@ -39,7 +44,8 @@ export default {
         console.log(response.data.msg)
       }
       // 
-      
+    }).catch(err => {
+      console.log(err)
     })
   },
   computed:{

@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <div class="title">申请注册</div>
+    <div class="title">登录</div>
     <form class="login__field" @submit.prevent="submitForm">
       <div class="input__wrapper">
         <label for="username">用户名*</label>
@@ -10,17 +10,10 @@
         <label for="password">密码*</label>
         <input v-model="password" class="input--style" type="password" name="password" placeholder="密码" required id="password">
       </div>
-      <div class="input__wrapper">
-        <label for="confirm">确认密码*</label>
-        <input v-model="repassword" class="input--style" type="password" placeholder="确认密码" id="confirm" required>
-      </div>
-      <div class="input__wrapper">
-        <label for="reg-code">输入注册码*</label>
-        <input v-model="regCode" class="input--style" type="text" name="reg-code" placeholder="输入注册码" id="reg-code" required>
-      </div>
-      <button class="btn btn--style submit submit--style" type="submit">注册</button>
-      <button class="btn btn--style" type="button" @click.prevent="gotoLogin">去登陆</button>
+      <button class="btn btn--style submit submit--style" type="submit">登录</button>
+      <button class="btn btn--style" type="button" @click.prevent="gotoRegist">去注册</button>
     </form>
+    <div class="error">{{errMsg}}</div>
   </div>
 </template>
 
@@ -34,33 +27,33 @@ export default {
     return {
       username: '',
       password: '',
-      repassword: '',
-      regCode: ''
+      errMsg: ''
     }
   },
   components: {
     
   },
   methods: {
-    gotoLogin() {
-      this.$router.push('./login/login-in')
+    gotoRegist() {
+      this.$router.push('/login')
     },
     submitForm() {
+      
       console.log('???')
-      const {username, password, regCode, repassword} = this
-      console.log(username, password, regCode, repassword)
-      if(password!==repassword) return false
-      if(!regCode) return false
-      if (username&&password&&regCode) {
-        axios.post(`${domain}/user/registion`, {
+      const {username, password} = this
+      if (username&&password) {
+        axios.post(`${domain}/user/login`, {
           username,
           password,
-          regCode
         }).then(response => {
           if(response.data) {
-            const token = response.data
-            localStorage.setItem('token', token)
-            this.$router.push('/record/list')
+            const data= response.data
+            if (data.msg) {
+              this.errMsg = data.msg
+            } else {
+              localStorage.setItem('token', data)
+              this.$router.push('/record/list')
+            }
           }
         }).catch(err => console.log(err))
       } 

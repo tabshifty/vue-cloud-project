@@ -25,7 +25,7 @@ const routes = [
     beforeEnter:(to, from, next) => {
       const token = localStorage.getItem('token')
       if(!token) {
-        next('./')
+        next('./login/login-in')
       }else {
         next()
       }
@@ -36,6 +36,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import('../views/Login.vue')
+  },
+  {
+    path: '/login/login-in',
+    name: 'login-in',
+    component: () => import('../views/Login-in.vue')
   } 
 ]
 
