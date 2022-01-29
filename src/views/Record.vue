@@ -18,7 +18,7 @@
 
 <script>
 import axios from 'axios' 
-const domain = ''//"http://192.168.8.27"
+const domain = "http://192.168.8.27"
 const token = localStorage.getItem('token')
 axios.interceptors.request.use(function(config) {
   config.headers.authorization = 'Bearer '+token

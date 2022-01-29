@@ -18,14 +18,19 @@
         <label for="reg-code">输入注册码*</label>
         <input v-model="regCode" class="input--style" type="text" name="reg-code" placeholder="输入注册码" id="reg-code" required>
       </div>
-      <button class="btn btn--style submit submit--style" type="submit">注册</button>
+      <FakeButton 
+        btnType="submit"
+        :loading="loader"
+        btnText="注册" />
       <button class="btn btn--style" type="button" @click.prevent="gotoLogin">去登陆</button>
     </form>
+    <div>{{errMsg}}</div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import FakeButton from '@/components/Button.vue'
 const axios = require('axios')
 const domain = ''//'http://192.168.8.27'
 export default {
@@ -35,23 +40,32 @@ export default {
       username: '',
       password: '',
       repassword: '',
-      regCode: ''
+      regCode: '',
+      loader: false,
+      errMsg: ''
     }
   },
   components: {
-    
+    FakeButton
   },
   methods: {
     gotoLogin() {
       this.$router.push('./login/login-in')
     },
     submitForm() {
-      console.log('???')
+      
       const {username, password, regCode, repassword} = this
       console.log(username, password, regCode, repassword)
-      if(password!==repassword) return false
-      if(!regCode) return false
+      if(password!==repassword) {
+        this.errMsg = "重复密码错误"
+        return false
+      }
+      if(!regCode) {
+        this.errMsg = "请输入注册码"
+        return false
+      }
       if (username&&password&&regCode) {
+        this.loader = true
         axios.post(`${domain}/user/registion`, {
           username,
           password,
@@ -60,9 +74,17 @@ export default {
           if(response.data) {
             const token = response.data
             localStorage.setItem('token', token)
-            this.$router.push('/record/list')
+            setTimeout(() => {
+              this.$router.push('/record/list')
+            }, 1000)
+            this.errMsg ="注册成功，开始跳转"
+            this.loader = false
           }
-        }).catch(err => console.log(err))
+        }).catch(err => {
+          console.log(err)
+          this.errMsg ="注册失败"
+          this.loader = false
+        })
       } 
       
     },
