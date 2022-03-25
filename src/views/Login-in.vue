@@ -20,7 +20,7 @@
 <script>
 // @ is an alias to /src
 const axios = require('axios')
-const domain = ''//'http://192.168.8.27'
+const domain = 'http://124.223.65.151'
 export default {
   name: 'Login',
   data() {
@@ -51,8 +51,15 @@ export default {
             if (data.msg) {
               this.errMsg = data.msg
             } else {
-              localStorage.setItem('token', data)
-              this.$router.push('/record/list')
+              let toPath = ''
+              localStorage.setItem('token', data) 
+              if (this.$route.query.from) {
+                console.log(this.$route.query.from)
+                toPath = this.$route.query.from
+              }else {
+                toPath = '/record/list'
+              }
+              this.$router.push(toPath)
             }
           }
         }).catch(err => console.log(err))
